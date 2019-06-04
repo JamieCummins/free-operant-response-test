@@ -1,0 +1,56 @@
+---
+title: "processing"
+author: "Jamie Cummins"
+date: "13/3/2019"
+output: html_document
+---
+
+
+```{r include=FALSE}
+knitr::opts_chunk$set(message = FALSE, 
+                      warning = FALSE, 
+                      cache = TRUE,
+                      echo = FALSE)
+
+```
+
+```{r}
+library(tidyverse)
+
+demographics_raw  <- read_csv("raw/demographics_raw.csv") %>%
+  filter(subject != 273402521)
+exploratory_raw   <- read_csv("raw/exploratory_raw.csv") %>%
+  filter(subject != 273402521)
+fort_raw          <- read_csv("raw/fort_raw.csv") %>%
+  filter(subject != 273402521)
+```
+
+```{r}
+demographics_cleaned_df <- demographics_raw %>%
+  select(subject, trialcode, response) %>%
+  na.omit() %>%
+  spread(trialcode, response)
+
+fort_cleaned_df <- fort_raw %>%
+  select(subject, blockcode, trialcode, correct, latency, stimulusitem1) %>%
+  filter(blockcode == "critical",
+         trialcode != "ITI" & trialcode != "correctmessage" & 
+           trialcode != "error" & trialcode != "slow") %>%
+  select(-blockcode)
+
+complete_fort_data <- fort_df %>%
+  dplyr::count(subject) %>%
+  filter(n == 250)
+
+fort_filtered_df <- fort_cleaned_df %>%
+  semi_join(complete_fort_data)
+
+demographics_filtered_df <- demographics_cleaned_df %>%
+  semi_join(complete_fort_data, by = "subject")
+```
+
+```{r}
+write_csv(demographics_filtered_df, "processed/demographics.csv")
+write_csv(fort_filtered_df, "processed/fort.csv")
+
+```

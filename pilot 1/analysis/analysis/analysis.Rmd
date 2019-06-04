@@ -1,0 +1,189 @@
+---
+title: "analysis"
+author: "Jamie Cummins"
+date: "13/3/2019"
+output: html_document
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(message = FALSE, 
+                      warning = FALSE, 
+                      cache = TRUE,
+                      echo = FALSE)
+
+```
+
+```{r}
+library(tidyverse)
+library(lme4)
+library(sjPlot)
+
+demographics_df <- read_csv("../data/processed/demographics.csv")
+fort_df         <- read_csv("../data/processed/fort.csv")
+```
+
+```{r}
+race_comparisons_df <- fort_df %>%
+  filter(trialcode == "black" | trialcode == "white") %>%
+  mutate(condition = 
+           case_when(trialcode == "white" ~ 1,
+                     trialcode == "black" ~ 2)) %>%
+  dplyr::rename(pleasant_response = correct) %>%
+  mutate(condition = as.factor(condition))
+
+valence_comparisons_df <- fort_df %>%
+  filter(trialcode == "pleasant" | trialcode == "unpleasant") %>%
+  mutate(condition = 
+           case_when(trialcode == "pleasant" ~ 1,
+                     trialcode == "unpleasant" ~ 2)) %>%
+  dplyr::rename(pleasant_response = correct) %>%
+  mutate(pleasant_response = ifelse(trialcode == "unpleasant" & 
+                                    pleasant_response == 1, 0,
+                             ifelse(trialcode == "unplesaant" & 
+                                    pleasant_response == 0, 1, 
+                                    pleasant_response))) %>%
+  mutate(condition = as.factor(condition))
+
+neutral_comparisons_df <- fort_df %>%
+  filter(trialcode == "neutral") %>%
+  mutate(condition = 
+           case_when(stimulusitem1 == "N106.bmp" ~ 1,
+                     stimulusitem1 == "N092.bmp" ~ 2,
+                     stimulusitem1 == "N101.bmp" ~ 1,
+                     stimulusitem1 == "N011.bmp" ~ 2,
+                     stimulusitem1 == "N089.bmp" ~ 1,
+                     stimulusitem1 == "N020.bmp" ~ 2,
+                     stimulusitem1 == "N039.bmp" ~ 1, 
+                     stimulusitem1 == "N061.bmp" ~ 2,
+                     stimulusitem1 == "N081.bmp" ~ 1,
+                     stimulusitem1 == "N102.bmp" ~ 2)) %>%
+  dplyr::rename(pleasant_response = correct) %>%
+  mutate(condition = as.factor(condition))
+
+gender_comparisons_df <- fort_df %>%
+  filter(trialcode == "black" | trialcode == "white") %>%
+  mutate(condition = 
+           case_when(stimulusitem1 == "white1.png" ~ 1,
+                     stimulusitem1 == "white2.png" ~ 1,
+                     stimulusitem1 == "black1.png" ~ 1,
+                     stimulusitem1 == "black2.png" ~ 1,
+                     stimulusitem1 == "white3.png" ~ 2,
+                     stimulusitem1 == "white4.png" ~ 2,
+                     stimulusitem1 == "black3.png" ~ 2, 
+                     stimulusitem1 == "black4.png" ~ 2)) %>%
+  dplyr::rename(pleasant_response = correct) %>%
+  mutate(condition = as.factor(condition))
+```
+
+# M1: Do we see the correct response mappings?
+
+```{r}
+m1_fit <- glmer(pleasant_response ~ condition + (1 | subject), 
+                data = valence_comparisons_df)
+tab_model(m1_fit, show.std = TRUE)
+plot_model(m1_fit, type = "pred", terms = "condition")
+
+```
+
+# H1: Are neutral images neutral?
+
+```{r}
+h1_fit <- glmer(pleasant_response ~ condition + (1 | subject), 
+                data = neutral_comparisons_df)
+tab_model(h1_fit, show.std = TRUE)
+plot_model(h1_fit, type = "pred", terms = "condition")
+
+```
+
+# H2: Do we see evidence for implicit racial bias?
+
+```{r}
+h2_fit <- glmer(pleasant_response ~ condition + (1 | subject), 
+                data = race_comparisons_df)
+tab_model(h2_fit, show.std = TRUE)
+plot_model(h2_fit, type = "pred", terms = "condition")
+
+```
+
+# H3: Do we see evidence for implicit gender bias?
+
+```{r}
+h3_fit <- glmer(pleasant_response ~ condition + (1 | subject), 
+                data = gender_comparisons_df)
+tab_model(h3_fit, show.std = TRUE)
+plot_model(h3_fit, type = "pred", terms = "condition")
+
+```
+
+# Increase strictness
+
+So no real evidence for any effect. What if we exclude participants who seemed to respond very consistently with either the z or m key?
+
+## Cleaning
+
+```{r}
+stricter_subjects_df <- neutral_comparisons_df %>%
+  dplyr::count(subject, pleasant_response) %>%
+  filter(55 > n, n > 20)
+```
+
+```{r}
+race_comparisons_stricter_df <- race_comparisons_df %>%
+  semi_join(stricter_subjects_df)
+
+valence_comparisons_stricter_df <- valence_comparisons_df %>%
+  semi_join(stricter_subjects_df)
+
+neutral_comparisons_stricter_df <- neutral_comparisons_df %>%
+  semi_join(stricter_subjects_df)
+
+gender_comparisons_stricter_df <- gender_comparisons_df %>%
+  semi_join(stricter_subjects_df)
+```
+
+## M1: Do we see the correct response mappings?
+
+```{r}
+m1_strict_fit <- glmer(pleasant_response ~ condition + (1 | subject), 
+                data = valence_comparisons_stricter_df)
+tab_model(m1_strict_fit, show.std = TRUE)
+plot_model(m1_strict_fit, type = "pred", terms = "condition")
+
+```
+
+## H1: Are neutral images neutral?
+
+```{r}
+h1_strict_fit <- glmer(pleasant_response ~ condition + (1 | subject), 
+                data = neutral_comparisons_stricter_df)
+tab_model(h1_strict_fit, show.std = TRUE)
+plot_model(h1_strict_fit, type = "pred", terms = "condition")
+
+```
+
+## H2: Do we see evidence for implicit racial bias?
+
+```{r}
+h2_strict_fit <- glmer(pleasant_response ~ condition + (1 | subject), 
+                data = race_comparisons_stricter_df)
+tab_model(h2_strict_fit, show.std = TRUE)
+plot_model(h2_strict_fit, type = "pred", terms = "condition")
+
+```
+
+## H3: Do we see evidence for implicit gender bias?
+
+```{r}
+h3_strict_fit <- glmer(pleasant_response ~ condition + (1 | subject), 
+                data = gender_comparisons_stricter_df)
+tab_model(h3_strict_fit, show.std = TRUE)
+plot_model(h3_strict_fit, type = "pred", terms = "condition")
+
+```
+
+
+
+
+
+
+

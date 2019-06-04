@@ -1,0 +1,294 @@
+﻿<usermanual>
+						
+Free Operant Response Test (V 0.1)		
+		
+Script Author: Jamie Cummins (psycholojamie@gmail.com), Ghent University.
+
+Open Science Framework: osf.io/a84sr
+ResearchGate: https://www.researchgate.net/profile/Jamie_Cummins2
+Twitter: https://twitter.com/psycholojamie
+ORCID ID: http://orcid.org/0000-0002-9729-4900
+
+Based on code from the Function Acquisition Speed Test.
+
+</usermanual>
+
+
+<defaults>
+/ fontstyle = ("Arial", 3.5%)
+/ screencolor = black
+/ txbgcolor = black
+/ txcolor = white
+/ minimumversion = "4.0.0.0"
+/ canvasaspectratio = (4, 3)
+</defaults>
+
+
+*************************************************
+Instructions
+*************************************************
+
+<page end>  
+The experiment is now concluded. 
+</page>
+
+<list instructions>
+/ items = (1, 2, 3, 4)
+/ resetinterval = 20
+/ selectionmode = sequence
+</list>
+
+<trial instructions>
+/ stimulustimes = [1=instructions, spacebar]
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+<text spacebar>
+/ items = ("Press the SPACE BAR to begin.")
+/ position = (50%, 95%)
+/ valign = bottom
+</text>
+
+<text instructions>
+/ items = instructions
+/ hjustify = left
+/ size = (90%, 60%)
+/ position = (50%, 85%)
+/ valign = bottom
+/ select = sequence
+</text>
+
+<item instructions>
+/ 1 = "Hello, and welcome to the experiment! This study examines how well people can remember an instruction, even when distracted."
+/ 2 = "During the task you will see pictures presented on the screen. There will be many kinds of these pictures: pictures of faces, objects, etc. In particular, there will be 4 pleasant, and 4 unpleasant, images.~n~n~n~nWhen you see a pleasant image, you will be required to press the 'z' key. When you see an unpleasant image, you will be required to press the 'm' key."
+/ 3 = "There will also be a number of other images that you see on-screen. For all other images, you can respond with either the 'z' key, or the 'm' key. However, it is important that you use both keys often when you see these images. Therefore, try to respond to the other images using both the 'z' key and 'm' key frequently. ~n~n~n~nAdditionally, for all images, you will be required to respond quickly (i.e., under 800 milliseconds). If you fail to respond under this time limit, you will be presented with the message '!!!TIMEOUT!!!'."
+/ 4 = "We will firstly give you 50 trials with only the positive and negative images to practice on. Remember: ~n~nPress the 'z' key when you see a pleasant image; ~n~nPress the 'm' key when you see an unpleasant image; ~n~nRespond as quickly and as accurately as possible.~n~nWhen you are ready, press the spacebar to begin."
+/ 5 = "Good! We will now present you with a few practice trials based on the whole task (i.e., including other images where you can press either the 'z' or 'm' key). So: ~n~nIf you see a pleasant image, press 'z'; ~n~nIf you see an unpleasant image, press 'm'; ~n~nIf you see any other image, you can press either the 'z' or the 'm' key; ~n~nRespond as quickly as possible."
+/ 6 = "You will now complete the main task. There will be 250 total trials, and this should take about 5-7 minutes to complete. Note that the more accurately you respond to the pleasant and unpleasant images when they appear, the more quickly the experiment will finish, so try your best. Good luck!"
+</item>
+
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = [date, time, group, subject, blockcode, blocknum, trialcode, trialnum, response, correct, latency, 
+stimulusnumber, stimulusitem]
+/ separatefiles = false
+</data>
+
+*************************************************
+Stimuli
+*************************************************
+<shape blackscreen>
+/ shape = rectangle
+/ color = (0, 0, 0)
+/ position = (50, 50)
+/ size = (1000, 400)
+/ erase = false
+</shape>
+
+<picture pleasant>
+/ items = pleasant
+/ size = (30%, 30%)
+</picture>
+
+<item pleasant>
+/ 1 = "pleasant1.jpg"
+/ 2 = "pleasant3.jpg"
+/ 3 = "pleasant7.jpg"
+/ 4 = "pleasant10.jpg"
+</item>
+
+<picture unpleasant>  
+/ items = unpleasant
+/ size = (30%, 30%)
+</picture>
+
+
+<item unpleasant>
+/ 1 = "unpleasant9.jpg"
+/ 2 = "unpleasant10.jpg"
+/ 3 = "unpleasant11.jpg"
+/ 4 = "unpleasant12.jpg"
+</item>
+
+<picture white>
+/ items = white
+/ size = (30%, 30%)
+</picture>
+
+<item white>
+/ 1 = "white1.png"
+/ 2 = "white2.png"
+/ 3 = "white3.png"
+/ 4 = "white4.png"
+</item>
+
+<picture black>
+/ items = black
+/ size = (30%, 30%)
+</picture>
+
+<item black>
+/ 1 = "black1.png"
+/ 2 = "black2.png"
+/ 3 = "black3.png"
+/ 4 = "black4.png"
+</item>
+
+<picture neutral>
+/ items = neutral
+/ size = (30%, 30%)
+</picture>
+
+<item neutral>
+/ 1 = "N011.bmp"
+/ 2 = "N020.bmp"
+/ 3 = "N039.bmp"
+/ 4 = "N061.bmp"
+/ 5 = "N081.bmp"
+/ 6 = "N089.bmp"
+/ 7 = "N092.bmp"
+/ 8 = "N101.bmp"
+/ 9 = "N102.bmp"
+/ 10 = "N106.bmp"
+</item>
+
+<text error>  
+/ items = ("        WRONG        ")
+/ txcolor = (255, 0, 0)
+/ fontstyle = ("Arial", 48pt)
+</text>
+
+<text correctmessage>
+/ items = ("       CORRECT       ")
+/ txcolor = (0, 255, 0)
+/ fontstyle = ("Arial", 48pt)
+</text>
+
+<text slow>
+/ items = ("   !!!T00 SLOW!!!    ")
+/ txcolor = (255, 0, 0)
+/ fontstyle = ("Arial", 48pt)
+</text>
+
+
+*************************************************
+Trials
+*************************************************
+
+<trial ITI>
+/ stimulusframes = [1 = blackscreen]
+/ validresponse = (0)
+/ trialduration = noreplace(200, 400, 600)
+</trial>
+
+
+<trial pleasant>  
+/ stimulusframes = [1=pleasant]
+/ validresponse = ("z", "m")
+/ correctresponse = ("z")
+/ timeout = 800
+/ responsetrial = ("z", correctmessage)
+/ responsetrial = (noresponse, slow)
+/ responsetrial = ("m", error)
+</trial>
+
+<trial unpleasant>  
+/ validresponse = ("z", "m")
+/ correctresponse = ("m")
+/ stimulusframes = [1=unpleasant]
+/ timeout = 800
+/ responsetrial = ("m", correctmessage)
+/ responsetrial = (noresponse, slow)
+/ responsetrial = ("z", error)
+</trial>
+
+<trial black>  
+/ validresponse = ("z", "m")
+/ correctresponse = ("z")
+/ stimulustimes = [0 = black]
+/ timeout = 800
+/ branch = [if(trial.black.response == 0) trial.slow]
+/ branch = [trial.iti]
+</trial>
+
+<trial white>  
+/ validresponse = ("z", "m")
+/ correctresponse = ("z")
+/ stimulustimes = [0 = white]
+/ timeout = 800
+/ branch = [if(trial.white.response == 0) trial.slow]
+/ branch = [trial.iti]
+</trial>
+
+<trial neutral>  
+/ validresponse = ("z", "m")
+/ correctresponse = ("z")
+/ stimulustimes = [0 = neutral]
+/ timeout = 800
+/ branch = [if(trial.neutral.response == 0) trial.slow]
+/ branch = [trial.iti]
+</trial>
+
+<trial slow>  
+/ stimulusframes = [1 = slow]
+/ timeout = 1500
+/ branch =  [trial.ITI]
+</trial>
+
+<trial error>  
+/ stimulusframes = [1 = error]
+/ timeout = 1500
+/ branch =  [trial.ITI]
+</trial>
+
+<trial correctmessage>  
+/ stimulusframes = [1 = correctmessage]
+/ trialduration = noreplace(200, 400, 600)
+/ branch =  [trial.ITI]
+</trial>
+
+*************************************************
+Blocks
+*************************************************
+<block induction>
+/ trials = [1-4 = instructions; 5-44 = noreplace(pleasant, unpleasant)]
+</block>
+
+<block practice>
+/ trials = [1= instructions; 2-41 = noreplace(pleasant, unpleasant, neutral, neutral)]
+</block>
+
+<block critical>
+/ trials = [1 = instructions; 2-251 = noreplace(black, white, pleasant, unpleasant, pleasant, unpleasant,
+												pleasant, neutral, neutral, neutral,
+												black, white, pleasant, unpleasant, pleasant, unpleasant,
+												unpleasant, neutral, neutral, neutral)]
+</block>
+
+
+*************************************************
+Experimental Layout
+*************************************************
+
+<expt experiment> 
+/ postinstructions = (end)
+/ groupassignment = subjectnumber
+/ blocks = [1 = induction; 2 = practice; 3 = critical]
+</expt>
+
+***********************************************************************
+Test Monkey
+***********************************************************************
+<monkey>
+/ latencydistribution = normal(500,200)
+/ percentcorrect = 50
+</monkey>
+
+***********************************************************************
+end of script
+***********************************************************************
